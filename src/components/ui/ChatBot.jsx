@@ -5,7 +5,7 @@ import { Input } from "./Input";
 import { Card } from "./Card";
 import { chatWithAI } from "../../lib/ai";
 import { useData } from "../../context/DataContext";
-import ReactMarkdown from 'react-markdown';
+import { marked } from 'marked';
 
 export function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -81,14 +81,10 @@ export function ChatBot() {
                             ? 'bg-primary text-white rounded-br-none' 
                             : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-bl-none'
                     }`}>
-                        <div className="whitespace-pre-wrap font-sans text-sm">
-                            {msg.content.split(/(\*\*.*?\*\*)/g).map((part, i) => {
-                                if (part.startsWith('**') && part.endsWith('**')) {
-                                    return <strong key={i}>{part.slice(2, -2)}</strong>;
-                                }
-                                return part;
-                            })}
-                        </div>
+                        <div 
+                            className="prose prose-sm dark:prose-invert max-w-none break-words"
+                            dangerouslySetInnerHTML={{ __html: marked.parse(msg.content) }}
+                        />
                     </div>
                 </div>
             ))}

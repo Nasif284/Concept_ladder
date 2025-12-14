@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../lib/utils";
 import { useData } from "../context/DataContext";
-import ReactMarkdown from 'react-markdown';
+import { marked } from 'marked';
 
 export function Ladder() {
   const { topic: topicSlug } = useParams();
@@ -141,40 +141,10 @@ export function Ladder() {
                                             {level.description}
                                         </p>
                                         <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-100 dark:border-gray-700 max-h-96 overflow-y-auto">
-                                            <div className="text-gray-800 dark:text-gray-200 text-sm leading-relaxed space-y-4">
-                                                {level.content.split('\n').map((line, i) => {
-                                                    if (!line.trim()) return null;
-                                                    
-                                                    // Handle bullet points
-                                                    if (line.trim().startsWith('- ') || line.trim().startsWith('* ')) {
-                                                        return (
-                                                            <div key={i} className="flex gap-2 ml-4">
-                                                                <span className="text-primary">•</span>
-                                                                <span>
-                                                                    {line.replace(/^[-*]\s/, '').split(/(\*\*.*?\*\*)/g).map((part, j) => {
-                                                                        if (part.startsWith('**') && part.endsWith('**')) {
-                                                                            return <strong key={j} className="font-bold text-primary dark:text-primary-light">{part.slice(2, -2)}</strong>;
-                                                                        }
-                                                                        return part;
-                                                                    })}
-                                                                </span>
-                                                            </div>
-                                                        );
-                                                    }
-
-                                                    // Handle regular paragraphs with bold text
-                                                    return (
-                                                        <p key={i}>
-                                                            {line.split(/(\*\*.*?\*\*)/g).map((part, j) => {
-                                                                if (part.startsWith('**') && part.endsWith('**')) {
-                                                                    return <strong key={j} className="font-bold text-primary dark:text-primary-light">{part.slice(2, -2)}</strong>;
-                                                                }
-                                                                return part;
-                                                            })}
-                                                        </p>
-                                                    );
-                                                })}
-                                            </div>
+                                            <div 
+                                                className="prose prose-sm dark:prose-invert max-w-none text-gray-800 dark:text-gray-200 leading-relaxed"
+                                                dangerouslySetInnerHTML={{ __html: marked.parse(level.content) }}
+                                            />
                                         </div>
                                         
                                         <div className="flex justify-end">
